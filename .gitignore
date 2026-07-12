@@ -1,0 +1,23 @@
+# Byte-compiled / caches
+__pycache__/
+*.py[cod]
+
+# Packaging / build
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.pdf
+
+# OS
+.DS_Store
