@@ -23,6 +23,8 @@ INDEPENDENT pieces that only share the content:
 (and shown only in the faithful rendering); shape_index() returns mu.
 """
 
+from functools import lru_cache
+
 from .multisets import multiset_difference, multiset_partitions, sub_multisets
 
 
@@ -128,6 +130,73 @@ def column_strict_fillings(shape, content):
 
     backtrack(0, tuple(sorted(content)))
     return results
+
+
+@lru_cache(maxsize=None)
+def count_column_strict_fillings(shape, content):
+    """Number of fillings counted by `column_strict_fillings`, without building
+    them.  Same backtracking, but it accumulates a count, so the tableaux never
+    have to be materialized -- the count is what the M-table needs, and there are
+    ~10x more tableaux at each n.  Cached, since the same (shape, sub-content)
+    pair recurs across many mu and many lambda.
+
+    `tests/test_counting.py` pins this against len(column_strict_fillings(...)).
+    """
+    shape = tuple(shape)
+    content = tuple(sorted(content))
+    coords = [(r, c) for r in range(len(shape)) for c in range(shape[r])]
+    total = len(coords)
+    if total == 0:
+        return 1 if len(content) == 0 else 0
+    grid = {}
+
+    def backtrack(index, remaining):
+        if index == total:
+            return 1 if not remaining else 0
+        cells_left = total - index
+        if len(remaining) < cells_left:
+            return 0                    # every cell is nonempty: not enough left
+        r, c = coords[index]
+        left = grid.get((r, c - 1))
+        top = grid.get((r - 1, c))
+        found = 0
+        for cell in sub_multisets(remaining):
+            if not cell:
+                continue
+            if len(remaining) - len(cell) < cells_left - 1:
+                continue                # would starve the remaining cells
+            if left is not None and cell < left:
+                continue
+            if top is not None and not (cell > top):
+                continue
+            grid[(r, c)] = cell
+            found += backtrack(index + 1, multiset_difference(remaining, cell))
+            del grid[(r, c)]
+        return found
+
+    return backtrack(0, content)
+
+
+def count_tableaux(content, mu):
+    """Number of Orellana-Zabrocki tableaux of `content` with body shape `mu`,
+    i.e. len(generate_tableaux(content, mu)) -- computed without building them.
+
+    Uses the same body/first-row split: sum over the body's sub-content of
+    (# shape-mu fillings) * (# multiset partitions of the leftover).
+    """
+    content = tuple(sorted(content))
+    mu = tuple(mu)
+    cells_needed = sum(mu)
+    total = 0
+    for body_content in sub_multisets(content):
+        if len(body_content) < cells_needed:
+            continue
+        bodies = count_column_strict_fillings(mu, body_content)
+        if not bodies:
+            continue
+        leftover = multiset_difference(content, body_content)
+        total += bodies * len(multiset_partitions(leftover))
+    return total
 
 
 def generate_tableaux(content, mu, m=None):

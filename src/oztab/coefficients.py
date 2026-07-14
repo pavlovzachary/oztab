@@ -6,8 +6,10 @@ here is derived from `generate_tableaux`, so the counts and the objects can
 never disagree.
 """
 
+from functools import lru_cache
+
 from .multisets import integer_partitions, integer_partitions_upto
-from .tableaux import generate_tableaux
+from .tableaux import count_tableaux
 
 
 def content_of(lam):
@@ -19,16 +21,28 @@ def content_of(lam):
     return tuple(elems)
 
 
-def M_row(lam):
-    """Row of the M-matrix for h_lambda: {mu: coefficient} over nonzero mu."""
+@lru_cache(maxsize=None)
+def _M_row_cached(lam):
     content = content_of(lam)
     n = len(content)
     row = {}
     for mu in integer_partitions_upto(n):
-        count = len(generate_tableaux(content, mu))
+        count = count_tableaux(content, mu)
         if count:
             row[mu] = count
     return row
+
+
+def M_row(lam):
+    """Row of the M-matrix for h_lambda: {mu: coefficient} over nonzero mu.
+
+    h_lambda is a product of h's, so it depends only on the multiset of parts:
+    lambda is sorted here, which also makes the cache hit across the reorderings
+    that Jacobi-Trudi throws off.  Returns a fresh dict; the cached one is not
+    handed out, so callers may mutate the result freely.
+    """
+    lam = tuple(sorted((p for p in lam if p > 0), reverse=True))
+    return dict(_M_row_cached(lam))
 
 
 def M_table(n):

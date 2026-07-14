@@ -1,39 +1,205 @@
 \documentclass[11pt]{article}
-\usepackage{amsmath, amssymb, amsthm}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
 
 \newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
 \newtheorem{lemma}{Lemma}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
 
-\title{A null coefficient in the $\widetilde{s}$-expansion at shape $(n-1,1)$}
-\author{}
-\date{}
-
+\DeclareMathOperator{\msp}{mp}
+\newcommand{\content}{\operatorname{content}}
 \newcommand{\stil}{\widetilde{s}}
+\newcommand{\ones}[1]{1^{#1}}
+
+% \author{}  % add author line if desired
+\title{The $\stil_{\varnothing}$-coefficient of $s_{(n-1,1)}$}
+\date{}
 
 \begin{document}
 \maketitle
 
-\begin{abstract}
-We record the vanishing of the coefficient of $\stil_{(n-1,1)}$ in a
-distinguished class of Schur-to-$\stil$ expansions, in the multiset-tableau
-model of Orellana--Zabrocki realized by the \texttt{oztab} package.
-\end{abstract}
+\noindent
+Throughout, $p(k)$ denotes the number of integer partitions of $k$, with the
+convention $p(0)=1$, and for a finite multiset $M$ we write $\msp(M)$ for the
+number of multiset partitions of $M$ (unordered collections of nonempty
+sub-multisets whose union is $M$). We work in the ring of symmetric functions
+with $\{\stil_\mu\}$ the Orellana--Zabrocki irreducible character basis
+\cite{OZ}. For a partition $\lambda=(\lambda_1,\lambda_2,\dots)$ the
+\emph{content} of $h_\lambda$ is the multiset
+$\content(\lambda)=\{\!\{\ones{\lambda_1},2^{\lambda_2},\dots\}\!\}$, i.e.\ it
+contains $\lambda_i$ copies of the label $i$. For partitions $\lambda,\mu$ we let
+$N_{\lambda,\mu}$ be the coefficient of $\stil_\mu$ in the expansion of the Schur
+function $s_\lambda$.
 
-\section{Statement}
+The goal is a closed form for $N_{(n-1,1),\varnothing}$ together with a proof
+that it is nonnegative.
 
-Recall (Orellana--Zabrocki, \emph{Symmetric group characters as symmetric
-functions}, Prop.~2 / Remark~8) that the coefficient
-$M_{\lambda,\mu}$ of $\stil_\mu$ in $h_\lambda$ counts the multiset tableaux
-of content $\{\!\{1^{\lambda_1} 2^{\lambda_2}\cdots\}\!\}$ whose body has shape
-$\mu$.
+\section{Two recalled facts}
 
-\begin{theorem}
-% TODO: precise hypotheses on lambda / n.
-Under the hypotheses below, $M_{\lambda,\,(n-1,1)} = 0$.
+\begin{lemma}\label{lem:empty}
+For every partition $\lambda$,
+\[
+  \bigl[\stil_{\varnothing}\bigr]\,h_\lambda \;=\; \msp\bigl(\content(\lambda)\bigr).
+\]
+\end{lemma}
+
+\begin{proof}
+By \cite[Prop.~2]{OZ}, for any fixed $m\ge 0$ the coefficient of $\stil_\mu$ in
+$h_\lambda$ counts the column-strict tableaux with $m$ blank cells in the first
+row, all remaining cells filled with nonempty multisets of total content
+$\content(\lambda)$, and body shape (the shape below the first row) equal to
+$\mu$. For $\mu=\varnothing$ there are no cells below the first row, so such a
+tableau is a single row: $m$ blanks followed by nonempty multiset cells that are
+weakly increasing in the lexicographic order on multisets. Discarding the blanks,
+the filled cells are precisely a multiset partition of $\content(\lambda)$
+written in its unique weakly increasing order. This assignment is a bijection
+between these tableaux and the multiset partitions of $\content(\lambda)$, whence
+the count is $\msp(\content(\lambda))$.
+\end{proof}
+
+\begin{lemma}\label{lem:jt}
+For $n\ge 2$,
+\[
+  s_{(n-1,1)} \;=\; h_{(n-1,1)} - h_{(n)}.
+\]
+\end{lemma}
+
+\begin{proof}
+The two-row Jacobi--Trudi identity gives
+\[
+  s_{(n-1,1)}
+  = \det\begin{pmatrix} h_{n-1} & h_{n}\\ h_{0} & h_{1}\end{pmatrix}
+  = h_{n-1}h_{1} - h_{n}h_{0}
+  = h_{(n-1,1)} - h_{(n)},
+\]
+using $h_0=1$.
+\end{proof}
+
+\section{The closed form}
+
+\begin{proposition}\label{prop:count}
+For $n\ge 1$,
+\[
+  \msp\bigl(\{\!\{\ones{n-1},2\}\!\}\bigr) \;=\; \sum_{k=0}^{n-1} p(k).
+\]
+\end{proposition}
+
+\begin{proof}
+Fix a multiset partition of $\{\!\{\ones{n-1},2\}\!\}$. Exactly one of its blocks
+contains the single label $2$; say that block contains $j$ ones as well, where
+$0\le j\le n-1$. The remaining $n-1-j$ ones are partitioned among the other
+blocks, and since these ones are indistinguishable this is an integer partition
+of $n-1-j$, contributing $p(n-1-j)$ possibilities. Conversely any choice of $j$
+and of a partition of $n-1-j$ determines the multiset partition. Summing over
+$j$,
+\[
+  \msp\bigl(\{\!\{\ones{n-1},2\}\!\}\bigr)
+  = \sum_{j=0}^{n-1} p(n-1-j)
+  = \sum_{k=0}^{n-1} p(k). \qedhere
+\]
+\end{proof}
+
+\begin{theorem}\label{thm:formula}
+For $n\ge 2$,
+\[
+  N_{(n-1,1),\varnothing} \;=\; \sum_{k=0}^{n-1} p(k)\;-\;p(n).
+\]
 \end{theorem}
 
 \begin{proof}
-% TODO: the counting / bijection argument.
+Apply $[\stil_\varnothing]$ to Lemma~\ref{lem:jt} and use Lemma~\ref{lem:empty}:
+\[
+  N_{(n-1,1),\varnothing}
+  = \bigl[\stil_\varnothing\bigr]h_{(n-1,1)} - \bigl[\stil_\varnothing\bigr]h_{(n)}
+  = \msp\bigl(\{\!\{\ones{n-1},2\}\!\}\bigr) - \msp\bigl(\{\!\{\ones{n}\}\!\}\bigr).
+\]
+Now $\msp(\{\!\{\ones{n}\}\!\})=p(n)$, since a multiset partition of $n$
+indistinguishable ones is exactly an integer partition of $n$; and
+$\msp(\{\!\{\ones{n-1},2\}\!\})=\sum_{k=0}^{n-1}p(k)$ by
+Proposition~\ref{prop:count}. Substituting gives the claim.
 \end{proof}
+
+\section{Nonnegativity via an injection}
+
+Let $\mathcal{P}(n)$ be the set of integer partitions of $n$, identified with the
+multiset partitions of $\{\!\{\ones{n}\}\!\}$ (a partition
+$\lambda=(\lambda_1\ge\cdots\ge\lambda_\ell)$ corresponds to the block collection
+$\{\!\{\{\!\{\ones{\lambda_1}\}\!\},\dots,\{\!\{\ones{\lambda_\ell}\}\!\}\}\!\}$),
+and let $\mathcal{Q}(n)$ be the set of multiset partitions of
+$\{\!\{\ones{n-1},2\}\!\}$. Thus $|\mathcal{P}(n)|=p(n)$ and
+$|\mathcal{Q}(n)|=\sum_{k=0}^{n-1}p(k)$ by Proposition~\ref{prop:count}.
+
+\begin{theorem}\label{thm:inj}
+There is an injection $\iota:\mathcal{P}(n)\hookrightarrow\mathcal{Q}(n)$.
+Consequently $N_{(n-1,1),\varnothing}=|\mathcal{Q}(n)|-|\mathcal{P}(n)|\ge 0$.
+\end{theorem}
+
+\begin{proof}
+\emph{Definition of $\iota$.} Given $\lambda\in\mathcal{P}(n)$, view it as the
+above block collection and replace one block of maximum size, namely a block
+$\{\!\{\ones{\lambda_1}\}\!\}$, by $\{\!\{\ones{\lambda_1-1},2\}\!\}$. That is,
+in one largest block, turn a single $1$ into the label $2$. The union of the
+blocks becomes $\{\!\{\ones{n-1},2\}\!\}$, so $\iota(\lambda)\in\mathcal{Q}(n)$.
+
+\emph{Well-defined.} If $\lambda$ has several parts equal to $\lambda_1$, the
+blocks $\{\!\{\ones{\lambda_1}\}\!\}$ are equal as multisets and hence
+interchangeable within the (unordered) multiset partition; modifying any one of
+them yields the same element of $\mathcal{Q}(n)$. So $\iota(\lambda)$ does not
+depend on the choice.
+
+\emph{Injective.} In $\iota(\lambda)$ exactly one block contains the label $2$;
+write it as $\{\!\{\ones{s},2\}\!\}$. By construction $s=\lambda_1-1$ and every
+other block is one of the $\{\!\{\ones{\lambda_i}\}\!\}$ with $2\le i\le\ell$.
+Replacing the block $\{\!\{\ones{s},2\}\!\}$ by $\{\!\{\ones{s+1}\}\!\}$ recovers
+the block collection of $\lambda$, hence $\lambda$ itself. Thus $\lambda$ is
+determined by $\iota(\lambda)$, and $\iota$ is injective.
+
+The inequality $N_{(n-1,1),\varnothing}\ge 0$ then follows from
+Theorem~\ref{thm:formula}, since an injection forces
+$|\mathcal{P}(n)|\le|\mathcal{Q}(n)|$.
+\end{proof}
+
+\begin{remark}[The coefficient counts the cokernel]
+Write each element of $\mathcal{Q}(n)$ by isolating its unique block
+$\{\!\{\ones{s},2\}\!\}$ containing the label $2$. The image of $\iota$ is exactly
+those elements for which $s+1\ge\mu$ for every all-ones block
+$\{\!\{\ones{\mu}\}\!\}$ present, i.e.\ those in which the $2$-block, after its
+$2$ is turned back into a $1$, is a block of maximum size. Therefore
+\[
+  N_{(n-1,1),\varnothing}
+  = \#\Bigl\{\,\pi\in\mathcal{Q}(n)\ :\ \text{some all-ones block of }\pi
+      \text{ has strictly more than } s+1 \text{ ones}\,\Bigr\},
+\]
+where $\{\!\{\ones{s},2\}\!\}$ is the $2$-block of $\pi$. This realizes the
+coefficient as the cardinality of the complement of $\operatorname{im}\iota$.
+\end{remark}
+
+\begin{remark}[Small values and consistency]
+For $n=2$, $N_{(1,1),\varnothing}=p(0)+p(1)-p(2)=1+1-2=0$, and indeed $\iota$ is a
+bijection ($\mathcal{Q}(2)=\{\{\!\{1,2\}\!\},\,\{\!\{1\}\!\}\{\!\{2\}\!\}\}$, both
+in the image). For $n=3$, $N_{(2,1),\varnothing}=(1+1+2)-3=1$, matching the
+coefficient of $\stil_\varnothing$ in the expansion
+$s_{(2,1)}=\stil_\varnothing+3\stil_{(1)}+2\stil_{(2)}+2\stil_{(1,1)}+\stil_{(2,1)}$;
+the single element outside $\operatorname{im}\iota$ is
+$\{\!\{1,1\}\!\}\{\!\{2\}\!\}$. Further values: $N=2,5,8$ for $n=4,5,6$.
+\end{remark}
+
+\begin{remark}[Relation to the injection program]
+This is the $b=1$ instance of the general target
+$M(a+1,b-1)\hookrightarrow M(a,b)$, where $M(a,b)=\msp(\{\!\{1^{a}2^{b}\}\!\})$: for
+$b=1$ and $a=n-1$ it reads $M(n,0)\hookrightarrow M(n-1,1)$, and the map $\iota$
+above is an explicit such injection.
+\end{remark}
+
+\begin{thebibliography}{9}
+\bibitem{OZ}
+R.~Orellana and M.~Zabrocki,
+\emph{Symmetric group characters as symmetric functions},
+Adv.\ Math.\ \textbf{390} (2021), Paper No.\ 107943.
+\end{thebibliography}
 
 \end{document}

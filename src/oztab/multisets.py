@@ -14,6 +14,7 @@ so cells never need a custom comparator; `<` on the tuples is the order.
 """
 
 from collections import Counter
+from functools import lru_cache
 from itertools import product
 
 
@@ -29,16 +30,26 @@ def _counter_to_tuple(counter):
     return tuple(out)
 
 
+@lru_cache(maxsize=None)
 def sub_multisets(multiset):
-    """Yield every sub-multiset of `multiset` (including () and the whole), each
-    as a sorted tuple.  Iterates multiplicity 0..k independently per label."""
+    """Every sub-multiset of `multiset` (including () and the whole), each as a
+    sorted tuple, as a tuple of tuples.  Iterates multiplicity 0..k independently
+    per label.
+
+    Cached and materialized rather than a generator: the tableau backtracking
+    asks for the sub-multisets of the same `remaining` content over and over
+    across sibling branches, and rebuilding the list at every node was the
+    dominant cost of the whole enumeration.
+    """
     counts = Counter(multiset)
     labels = sorted(counts)
+    out = []
     for choice in product(*[range(counts[v] + 1) for v in labels]):
         piece = []
         for value, take in zip(labels, choice):
             piece.extend([value] * take)
-        yield tuple(piece)
+        out.append(tuple(piece))
+    return tuple(out)
 
 
 def multiset_difference(a, b):
@@ -48,6 +59,7 @@ def multiset_difference(a, b):
     return _counter_to_tuple({v: n for v, n in counts.items() if n > 0})
 
 
+@lru_cache(maxsize=None)
 def multiset_partitions(multiset):
     """All multiset partitions of `multiset`, each as a sorted tuple of cells
     (a cell is itself a sorted tuple), with no duplicates.
