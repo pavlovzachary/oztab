@@ -15,6 +15,8 @@ from .schur import (N_row, N_table, jacobi_trudi_terms, negative_terms,
 from .profiles import (profile, contribution, contribution_by_profile,
                        profile_counts, M_empty_via_profiles,
                        N_empty_via_profiles, assignment_search, cross_check)
+from .n1 import (N_n1, N_n1_row, N_n1_series, principal_specialization,
+                 outer_corners, hook_lengths, partition_series)
 
 __all__ = [
     # tableaux
@@ -27,6 +29,9 @@ __all__ = [
     "profile", "contribution", "contribution_by_profile", "profile_counts",
     "M_empty_via_profiles", "N_empty_via_profiles", "assignment_search",
     "cross_check",
+    # closed form for lambda = (n, 1)
+    "N_n1", "N_n1_row", "N_n1_series", "principal_specialization",
+    "outer_corners", "hook_lengths", "partition_series",
     # multisets
     "multiset_partitions", "integer_partitions",
 ]

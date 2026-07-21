@@ -10,7 +10,7 @@ Usage:
     python gen_two_row.py          # a,b <= 5
     python gen_two_row.py 6        # a,b <= 6
 
-Mirror of gen_n1.py: a thin driver over the public API, nothing new in src/.
+Mirror of gen_tableaux.py: a thin driver over the public API, nothing new in src/.
 To cross-check under a Sage kernel:  st(h[[a,b]]) should match M_row((a,b)).
 """
 
